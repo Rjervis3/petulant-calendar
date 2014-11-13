@@ -1,0 +1,121 @@
+A Daily Calendar Program
+
+This problem outlines a simplified version of a program to maintain a 
+person's daily calendar. Individual appointments will be stored in a struct:
+
+   const maxLen = 80;
+   struct appt {
+      int year;
+      int month; /* 1=January, 2=February, ..., 12=December */
+      int day;
+      char text [maxLen];
+   }
+
+As this struct suggests, in this problem ignores the time of day for an 
+appointment.
+
+The program should handle the following processing tasks:
+
+    The user may enter an appointment by specifying information in a
+ standard date/text format:
+    month (chars) day (int), (comma) year (int): (colon) text (chars). 
+For example,
+
+         September 23, 2014:  Module 001 Project Due
+         October 20, 2014:  Fall Break begins
+         October 24, 2014:  Fall Break ends
+         November 27, 2014:  Thanksgiving Day
+         November 28, 2014:  Thanksgiving Recess 
+
+    The user may sort appointments either chronologically by date or 
+alphabetically by appointment text.
+    The user may print the list of appointments. 
+
+When running this program, a user should be given a menu of options, 
+such as the following:
+
+Calendar program options:
+   e:  enter a new appointment (date, text)
+   d:  sort appointments by date
+   a:  sort appointments alphabetically by appointment text
+   p:  print current appointments
+   q:  quit
+
+Within the program, the collection of appointments will be stored in an
+ array, because sorting an array with an insertion sort is reasonably
+ efficient. Of course, use of an array is complicated by the need to 
+allocate space for the array. One way to accomplish this would be to
+ declare an array of a specific size:
+
+     int maxSize = 100; /* some specified maximum */
+     struct appt apptArray [maxSize];
+
+With such an array, a separate variable int numAppts would keep track of
+ how many appointments are actually recorded in apptArray. Thus, numAppts
+ would be initialized to 0 and then incremented by 1 each time a new
+ apppointment was entered.
+
+While this approach will work for awhile, it is still limited by maxSize; 
+the program must maintain the condition that numAppts<=maxSize.
+
+To remove this restriction, the array could be stored in dynamic memory.
+ The revised declarations would be:
+
+     int maxSize = 100; /* current size of the apptArray */
+     struct appt * apptArray = malloc (maxSize * sizeof (struct appt)):
+     int numAppts = 0;
+
+With this initialization, addition of new appointments can continue until 
+the array is full. When no more space is available in apptArray,
+
+    a new and larger array would be allocated,
+    the appointments in the old array would be copied into the new array,
+    the old array would be deallocated,
+    the apptArray would point to the new array
+    additional appointments can now be added 
+
+Write a program to implement this calendar program.
+
+As extra credit, add one menu option to read appointments from a file 
+rather than from the keyboard, and add a second menu option to write the 
+current collection of appointments to a file.
+
+Programming notes:
+
+    Although the program may add a name anywhere in the array, it is 
+suggested that a new appointment be inserted after all existing appointments.
+    During insertion, the user must type the full month (e.g., January,
+ February), not a number, a single letter, or other abbreviation.
+    If the user enters an invalid month name, the program should report
+ the error, disregard the appointment entered, and continue with the menu again.
+    The program is not responsible for checking that the day numbers are
+ valid for the month (e.g., February 30 need not be flagged as an error).
+    When printing, the program should print the full month, day, year, 
+and text. Printing just the number of the month is not adequate.
+    Converting from a month's name to an internal number may be 
+accomplished in any way a programmer wishes (as long as January is 
+stored as 1, etc.). For example, two possibilities are:
+        A sequence of if ... else statements might be used.
+        An array of month names might be used. 
+    Printing may be accomplished in any way a programmer wishes, as 
+long as the full month name, etc. are given. For example, three 
+possibilities are:
+        A sequence of if ... else statements might be used.
+        A switch statement might be used.
+        An array of month names might be referenced. 
+    Sorting must use an insertion sort with a parameter comesFirst that
+ indicates when one struct appt comes before another. The program also 
+should define two comparison procedures:
+
+    /* returns 1 if the date for appointment app1 comes before the 
+       date for app2, and returns 0 otherwise */
+    int comesFirstByDate (struct appt app1, struct appt app2)
+
+    /* returns 1 if the text for appointment app1 comes before the 
+       date for app2, and returns 0 otherwise */
+    int comesFirstByText (struct appt app1, struct appt app2)
+
+    With this framework, implementing the "sort by date" option involves 
+a simple call to the insertion sort procedure with comesFirstByDate as 
+one parameter. Implementing the "sort by text" option involves a simple 
+call to the insertion sort procedure with comesFirstByText as one parameter. 
