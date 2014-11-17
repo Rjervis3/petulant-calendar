@@ -1,6 +1,6 @@
      /***********************************************************************
      * Name: Renn Jerivs                                                   *
-     * Box   : 3762                                                        *
+     * Box : 3762                                                          *
      * Assignment: Supplemental Problem 4: Daily Calendar                  *
      *                                                                     *
      * Assignment for Friday, November 21st                                *
@@ -17,7 +17,8 @@
      *   ->Referenced  http://stackoverflow.com/questions/1088622/
      *       how-do-i-create-an-array-of-strings-in-c for help declaring   *
      *       string literals                                               *
-     *                                                                     *
+     *   ->Referenced lab2-2-1.c from Lab on Functions pt 2 for reminder   *
+     *     on accessing pointers                                           *
      *                                                                     *
      *   Help obtained:  [none]                                            *
      *                                                                     *
@@ -49,7 +50,7 @@
 //Pre-conditions: Count is number of elements in array 
 //Post-conditions: Program adds and appointment at the end of the current 
 //  array. 
-void addAppt(struct appt ** apptarray, int count);
+void addAppt(struct appt * apptarray, int * numAppts);
 
 //Pre-conditions: none --note month of size 10 because no month names exceed
 //  9 characters (1 allowed for null character).
@@ -62,10 +63,37 @@ int monthSort (char month[10]);
 void printAppts(struct appt * apptarray, int count);
 
 //Pre-conditions:
+//Post-conditions
+void sortByDate(struct appt * apptarray, int length);
+
+//Pre-conditions:
+//Post-conditions
+void sortByText(struct appt * apptarray, int length);
+
+/* returns 1 if the date for appointment app1 comes before the 
+   date for app2, and returns 0 otherwise */
+int comesFirstByDate (struct appt app1, struct appt app2);
+
+/* returns 1 if the text for appointment app1 comes before the 
+   date for app2, and returns 0 otherwise */
+int comesFirstByText (struct appt app1, struct appt app2);
+
+void writeToFile(struct appt * apptarray, int numAppts);
+
+//Pre-conditions:
 //Post-conditions:
 int main()
 {
-int numAppts = 0;
+  int i;
+  int numAppts=0;
+  int maxSize = 100; /* current size of the apptArray */
+
+ //declare dynamic array for storing appts
+  struct appt * apptArray = malloc (maxSize * sizeof (struct appt));
+
+  //for option entered by user
+   char option;
+
   while(1)  //loop until program is quit
     {
       //print list of menu options
@@ -78,14 +106,23 @@ int numAppts = 0;
       printf("\t w:\tWrite appointments to a file\n");
       printf("\t q:\tQuit the program\n\n");
 
-      //declare dynamic array for storing appts
-      int maxSize = 100; /* current size of the apptArray */
-      struct appt * apptArray = malloc (maxSize * sizeof (struct appt));
- 
+      if (numAppts == maxSize) //if current array is too small
+        { 
+          printf("uh oh!\n");
+          //a new and larger array will be allocated
+          maxSize = maxSize * 2; 
+          struct appt * tempArray = malloc (maxSize * sizeof (struct appt));
+         //the appointments in the old array would be copied into the new array 
+          for(i=0; i<=numAppts; i++)
+            {
+              tempArray[i] = apptArray[i];
+            }
+          //the old array would be deallocated
+          free(apptArray); //****
+          //the apptArray would point to the new array 
+          apptArray=tempArray;
+        }
 
-
-      //read option entered by user
-      char option;
       printf("Please enter an option: ");
       scanf("%c", &option);
       while(getchar() != '\n');  //clear input after reading
@@ -96,16 +133,16 @@ int numAppts = 0;
       switch (option)
         {
         case 'e': 
-          addAppt(&apptArray, numAppts);
-          printf(" %d", apptArray[numAppts].month);
-          numAppts++;
+          printf("\nold number appts: %d\n", numAppts);
+          addAppt(apptArray, &numAppts);
           printf("\nnew number appts: %d\n", numAppts);
+    // printf("exiting with month number %d\n", apptArray[numAppts-1].month);
           break;
         case 'd':
-          printf("option d\n");
+          sortByDate(apptArray, numAppts);
           break;
         case 'a':
-          printf("option a\n");
+          sortByText(apptArray, numAppts);
           break;
         case 'p':
           printAppts(apptArray, numAppts);
@@ -114,7 +151,7 @@ int numAppts = 0;
           printf("READ OPTION\n");
           break;
         case 'w': 
-          printf("write option\n");
+          writeToFile(apptArray, numAppts);
           break;
         default: //if unrecognized option is entered
           printf("Unknown command, try again...\n");
@@ -129,28 +166,30 @@ int numAppts = 0;
   return 0;
 }
 
-void addAppt(struct appt ** apptarray, int count)
+void addAppt(struct appt * apptarray, int * numAppts)
 {
   char month[10];
   int year, monthInt, day;
   char text [maxLen];
+  int i=0;
   printf("\nPlease enter your appointment information in the format\n");
   printf("Month name date, year : Appointment notes\n");
-  int i=0;
+  
+  //read user input
   scanf("%s", &month);
   scanf("%d,", &day);
   scanf("%d:", &year);
 
   //appointment notes read with getchar to allow spaces
-   while ((text[i] = getchar()) != '\n')
+  while ((text[i] = getchar()) != '\n')
     {
       i++;
     }
-   text[i]='\0'; //set last char to null for correct printing
+  text[i]='\0'; //set last char to null for correct printing
 
- monthInt=monthSort(month);
-  
-  if(monthInt==0) //prints and returns to menu if invalid month given
+  //executes and returns to menu if invalid month given
+  //convert month name to int for future sorts in one step
+  if((monthInt=monthSort(month)) == 0 ) 
     {
       printf("An invalid month name was entered, returning to menu\n");
     }
@@ -166,21 +205,20 @@ void addAppt(struct appt ** apptarray, int count)
 
       if(option2 == 'c')
         { 
-          (*apptarray)[count].year =year;
-          (* apptarray)[count].day =day;
-          strcpy((*apptarray)[count].text, text);
-          (*apptarray)[count].month=monthInt;
+          apptarray[*numAppts].year =year;
+          apptarray[*numAppts].day =day;
+          strcpy(apptarray[*numAppts].text, text);
+          apptarray[*numAppts].month=monthInt;
           printf("The appointment stored as:");
-          printf(" %d", (*apptarray)[count].month);
-          printf(" %d,", (* apptarray)[count].day);
-          printf(" %d:", (*apptarray)[count].year);
-          printf(" %s\n", (*apptarray)[count].text);
-          
+          printf(" %d", apptarray[*numAppts].month);
+          printf(" %d,", apptarray[*numAppts].day);
+          printf(" %d:", apptarray[*numAppts].year);
+          printf(" %s\n", apptarray[*numAppts].text);
+          *numAppts = *numAppts + 1;
         }
       else if(option2 =='d')
-        addAppt(apptarray, count);
+        addAppt(apptarray, numAppts);
     }
-  printf("current count %d" , count +1);
 }
  
 int monthSort (char month[10])
@@ -216,11 +254,11 @@ int monthSort (char month[10])
   return monNum;
 }
 
-void printAppts(struct appt apptarray[], int count)
+void printAppts(struct appt * apptarray, int count)
 {
   int i;
-  const char * monthNames[13] = {"Zero",
-                                 "January", 
+  const char * monthNames[13] = {"Zero",        //to make accessing easier
+                                 "January",  // ie now monthName[5] = May
                                  "February",
                                  "March",
                                  "April",
@@ -236,11 +274,11 @@ void printAppts(struct appt apptarray[], int count)
   
   if (count != 0)
     {
-      printf("Printing appointments in order entered:\n");
+      printf("Printing appointments:\n");
       for (i=0; i < count; i++)
         {
-          printf("appt %d: ", i);
-          printf("%s ", monthNames[*(apptarray[i].month)]);
+          printf("Appointment %d: ", i+1);
+          printf("%s ", monthNames[apptarray[i].month]);
           printf("%d, %d:", apptarray[i].day, apptarray[i].year);
           printf("%s \n", apptarray[i].text);
         }
@@ -248,4 +286,97 @@ void printAppts(struct appt apptarray[], int count)
   else 
     if (count == 0) printf("There are no appointments to print\n");
 
+}
+
+void sortByDate(struct appt * apptarray, int length)
+{
+  int k;
+  for ( k = 1; k < length; k++) {
+    struct appt item = apptarray[k];
+    int i = k-1;
+    while ((i >= 0) && (comesFirstByDate(item, apptarray[i]))){
+      apptarray[i+1] = apptarray[i];
+      i--;
+    }
+    apptarray[i+1] = item;  
+  }
+  printf("Elements of calendar now sorted by date. Print with 'p' option");
+}
+
+void sortByText(struct appt * apptarray, int length)
+{
+ int k;
+  for ( k = 1; k < length; k++) {
+    struct appt item = apptarray[k];
+    int i = k-1;
+    while ((i >= 0) && (comesFirstByText(item, apptarray[i]))){
+      apptarray[i+1] = apptarray[i];
+      i--;
+    }
+    apptarray[i+1] = item;  
+  }
+ printf("Elements of calendar now sorted by text. Print with 'p' option");
+}
+
+/* returns 1 if the date for appointment app1 comes before the 
+   date for app2, and returns 0 otherwise */
+int comesFirstByDate(struct appt app1, struct appt app2)
+{
+  if(app1.year < app2.year)
+    {
+      return 1;
+    }
+  else if (app1.year == app2.year)
+    {
+      if (app1.month < app2.month)
+        {
+          return 1;
+        }
+      else if (app1.day < app2.day) return 1;
+    }
+  else    //if app2.year > app1.year, app 1 is not first
+    return 0;
+}
+
+/* returns 1 if the text for appointment app1 comes before the 
+   text for app2, and returns 0 otherwise */
+int comesFirstByText (struct appt app1, struct appt app2)
+{
+  if(strcmp(app1.text, app2.text) < 0)
+    return 1;
+  else return 0;
+  
+}
+
+
+void writeToFile(struct appt * apptarray, int numAppts)
+{
+  const char * w  = "w";
+  int i;
+  FILE * file =  fopen("./Appointments.txt", w);
+  
+
+ const char * monthNames[13] = {"Zero",        //to make accessing easier
+                                 "January",  // ie now monthName[5] = May
+                                 "February",
+                                 "March",
+                                 "April",
+                                 "May",
+                                 "June",
+                                 "July",
+                                 "August",
+                                 "September",
+                                 "October",
+                                 "Novemeber",
+                                 "December" };
+
+
+  for (i=0; i<numAppts; i++)
+    { 
+      fprintf(file, "Appointment %d: ", i+1);
+      fprintf(file, "%s ", monthNames[apptarray[i].month]);
+      fprintf(file, "%d, %d:", apptarray[i].day, apptarray[i].year);
+      fprintf(file, "%s \n", apptarray[i].text);
+    }
+ fclose(file);
 }
