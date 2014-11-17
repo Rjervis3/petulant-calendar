@@ -14,6 +14,10 @@
      *   ->Referenced project011 for use of exit function                  *
      *   ->Referenced getchar-line-example.c from lab on char by char I/O  *
      *       for use of getchar and a while loop                           *
+     *   ->Referenced  http://stackoverflow.com/questions/1088622/
+     *       how-do-i-create-an-array-of-strings-in-c for help declaring   *
+     *       string literals                                               *
+     *                                                                     *
      *                                                                     *
      *   Help obtained:  [none]                                            *
      *                                                                     *
@@ -29,21 +33,14 @@
  *  This is a program to maintain a daily calendar via the terminal.
  */
 
+
+
 //compile and run with the line gcc -o calendar calendar.c && ./calendar
 
 #include <stdio.h>
 #include <stdlib.h>       //for use with exit function
  #include <string.h>
-
-#define maxLen 80
-
-//definition of appointment structure
-  struct appt {
-      int year;
-      int month; /* 1=January, 2=February, ..., 12=December */
-      int day;
-      char text [maxLen];
-   };
+#include "appt.h"    //defines apointment struct and maxLen
 
 
 //function declarations
@@ -52,8 +49,7 @@
 //Pre-conditions: Count is number of elements in array 
 //Post-conditions: Program adds and appointment at the end of the current 
 //  array. 
-void addAppt(struct appt * apptarray, int count);
-
+void addAppt(struct appt ** apptarray, int count);
 
 //Pre-conditions: none --note month of size 10 because no month names exceed
 //  9 characters (1 allowed for null character).
@@ -62,10 +58,14 @@ void addAppt(struct appt * apptarray, int count);
 int monthSort (char month[10]);
 
 //Pre-conditions:
+//Post-conditions
+void printAppts(struct appt * apptarray, int count);
+
+//Pre-conditions:
 //Post-conditions:
 int main()
 {
-
+int numAppts = 0;
   while(1)  //loop until program is quit
     {
       //print list of menu options
@@ -81,21 +81,25 @@ int main()
       //declare dynamic array for storing appts
       int maxSize = 100; /* current size of the apptArray */
       struct appt * apptArray = malloc (maxSize * sizeof (struct appt));
-      int numAppts = 0;
+ 
 
 
-        //read option 
+      //read option entered by user
       char option;
       printf("Please enter an option: ");
       scanf("%c", &option);
-      while(getchar() != '\n');
+      while(getchar() != '\n');  //clear input after reading
   
       printf("\n");
+
       //switch statement to determine action based on user choice
       switch (option)
         {
         case 'e': 
-          addAppt(apptArray, numAppts); 
+          addAppt(&apptArray, numAppts);
+          printf(" %d", apptArray[numAppts].month);
+          numAppts++;
+          printf("\nnew number appts: %d\n", numAppts);
           break;
         case 'd':
           printf("option d\n");
@@ -104,7 +108,7 @@ int main()
           printf("option a\n");
           break;
         case 'p':
-          printf("print option\n");
+          printAppts(apptArray, numAppts);
           break;
         case 'r':
           printf("READ OPTION\n");
@@ -112,10 +116,11 @@ int main()
         case 'w': 
           printf("write option\n");
           break;
-        default:
+        default: //if unrecognized option is entered
           printf("Unknown command, try again...\n");
           break;
         case 'q':
+          printf("Terminating program . . .\n");
           exit(0);
         }
           
@@ -124,7 +129,7 @@ int main()
   return 0;
 }
 
-void addAppt(struct appt * apptarray, int count)
+void addAppt(struct appt ** apptarray, int count)
 {
   char month[10];
   int year, monthInt, day;
@@ -149,27 +154,33 @@ void addAppt(struct appt * apptarray, int count)
     {
       printf("An invalid month name was entered, returning to menu\n");
     }
-  else  //this else exectutes if month is correct
+  else  //this else executes if month is correct
     {
       printf("The appointment you entered was:");
       printf(" %s %d, %d: %s\n", month, day, year, text);
   
       char option2;
       printf("If this is correct press c to store, or press d to try again\n");
-
       scanf("%c", &option2);
       while(getchar() != '\n'); //clears input for reading
- 
+
       if(option2 == 'c')
-        {
-          apptarray[count].year =year;
-          apptarray[count].day =day;
-          //apptarray[count].text="text";
-          apptarray[count].month=monthSort(month);
+        { 
+          (*apptarray)[count].year =year;
+          (* apptarray)[count].day =day;
+          strcpy((*apptarray)[count].text, text);
+          (*apptarray)[count].month=monthInt;
+          printf("The appointment stored as:");
+          printf(" %d", (*apptarray)[count].month);
+          printf(" %d,", (* apptarray)[count].day);
+          printf(" %d:", (*apptarray)[count].year);
+          printf(" %s\n", (*apptarray)[count].text);
+          
         }
       else if(option2 =='d')
         addAppt(apptarray, count);
     }
+  printf("current count %d" , count +1);
 }
  
 int monthSort (char month[10])
@@ -203,4 +214,38 @@ int monthSort (char month[10])
   else return 0;  //to indicate month entered incorrectly
 
   return monNum;
+}
+
+void printAppts(struct appt apptarray[], int count)
+{
+  int i;
+  const char * monthNames[13] = {"Zero",
+                                 "January", 
+                                 "February",
+                                 "March",
+                                 "April",
+                                 "May",
+                                 "June",
+                                 "July",
+                                 "August",
+                                 "September",
+                                 "October",
+                                 "Novemeber",
+                                 "December" };
+
+  
+  if (count != 0)
+    {
+      printf("Printing appointments in order entered:\n");
+      for (i=0; i < count; i++)
+        {
+          printf("appt %d: ", i);
+          printf("%s ", monthNames[*(apptarray[i].month)]);
+          printf("%d, %d:", apptarray[i].day, apptarray[i].year);
+          printf("%s \n", apptarray[i].text);
+        }
+    }
+  else 
+    if (count == 0) printf("There are no appointments to print\n");
+
 }
