@@ -15,3 +15,64 @@ and the prompt
 "Previous appointment book full, more space now allocated"
 is printed after the calendar menu and adding more appointments proceeds
 as expected.
+
+Now proceed to test the specifications of the problem:
+test the case of a user entering an incorect month name:
+-> enter option e and then enter " Jan 1, 2015: new years!"
+The program prints:
+"An invalid month name was entered, returning to menu"
+and then prints the menu again. If we try to print the appointment, we
+see that it has not been stored. Note, however, that lowercase month
+names will also return this error.
+
+To check the functionality of the print program enter two appointments
+April 27, 2015: baby shower
+June 12, 2014: job interview
+now choose the print option by entering 'p'. The program prints:
+    Printing appointments:
+    Appointment 1: April 27, 2015: baby shower 
+    Appointment 2: June 12, 2014: job interview
+
+which prints the fill month name, as well as the rest of the appointment data
+
+Now it seems prudent to check the functionality of the read option
+of the program. Make sure there is a file in the local directory called
+"Appointment-input.txt" which contains a list of some number of appointments.
+The provided file includes data for   appointments.
+
+Now that we have supposedly read in a large list of data, check that
+the program imported the data correctly by printing the list.
+->The program prints the appointments as listed in the file
+
+Now we can test the functionality of the sorting algrithm by selecting
+the "d" option. The program prints the appropriate message:
+"Elements of calendar are now sorted. Print with 'p' option"
+Now when we do print the list we see it has been sorted with the
+earliest dates at the top. Notice also that appointments are in order
+by month and day.
+program prints:
+
+
+Now we can test the second sorting option with the 'a' option. The program 
+prints the same prompt as indicated above and when we print the list of 
+appointments we see that they are alphabetized. Notice that program does
+not account for capital letters vs lowercase.
+program prints:
+
+Finally, we can test the write option by selecting 'w' option. The program
+prints the prompt 
+
+If we terminate the program using 'q' option and enter 
+emacs Appointments.txt
+then we will see the list of appointments we just wrote.
+Note that this file will be created if it does not exist and overwritten
+each time the program is run if it does. You may change specifications
+within the appt-func.c file which indicate
+
+
+
+
+This program is correct to the specifications because it successfully
+maintains a daily calendar. It will allocate a larger appointment array
+when the old one is full and the sorting algorthm is the specified insertion
+sort with the comesFirst parameter.
