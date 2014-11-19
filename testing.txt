@@ -1,0 +1,17 @@
+
+
+
+Testing for supplemental problem 4: a Daily Calendar
+
+The most obvious issue that could arise with this program is a failure
+to correctly allocate a new array if the old appointmen array is full.
+To test this we will begin with a small case, setting the max size
+of the array to 4 appointments. This is accomplised by setting the 
+variable   int maxSize = 4; in the third line of the main procedure. We
+will now compile and run the program--this can be achieved by simply typing
+"make" and then running the program with ./1. Now we add 4 appointments, 
+so the old array must be full. We see that the program continues to run
+and the prompt
+"Previous appointment book full, more space now allocated"
+is printed after the calendar menu and adding more appointments proceeds
+as expected.
