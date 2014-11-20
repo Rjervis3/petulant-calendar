@@ -1,0 +1,5 @@
+January 12, 2014: appointment 1
+January 12, 2015: appointment 2
+February 12, 2014: appointment 3
+March 12, 2015: appointment 5
+March 12, 2014: appt 6

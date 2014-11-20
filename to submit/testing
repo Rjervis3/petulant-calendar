@@ -1,0 +1,297 @@
+
+
+
+Testing for supplemental problem 4: a Daily Calendar
+
+In general, compile this program using make command and run with ./1
+
+The most obvious issue that could arise with this program is a failure
+to correctly allocate a new array if the old appointment array is full.
+
+   ->Test case 1:
+          To test this we will begin with a small case, setting the max size
+     of the array to 4 appointments. This is accomplised by setting the 
+     variable   int maxSize = 4; in the third line of the main procedure. We
+     will now compile and run the program--this can be achieved by simply typing
+     "make" and then running the program with ./1. Now we add 4
+     appointments, using the 'e' option each time and storing with
+     secondary 'c' option (to be clear, when an appointment is entered
+     the program asks the user to confirm the data is correct before storing).
+           
+     So now the old array must be full. We see that the program continues to run
+     and the prompt
+
+     "Previous appointment book full, more space now allocated"
+
+     is printed after the calendar menu and the adding more appointments 
+     proceeds as expected. Now the max size ought to be stored as twice
+     what is was previously, and so if we add another 4 appointments we
+     should get the same message again, which we see occur when 8
+     appointments have been entered.
+     
+   ->Test case 2:  
+          For this case we will test a slightly larger number of max
+     appoitments. Included file test2.txt contains a list of 20
+     appointments. First change the name of this file to 
+     "Appointment_input.txt", or change the line 
+
+     FILE * file =  fopen("./Appointment_input.txt", mode);
+
+     in readFromFile function in appt-func.c so that it will open test2.txt 
+     instead. Then change the maxSize to 20 and numRead to 20 in
+     calendar.c. Compile program with make command and run with ./1 . Now 
+     select 'r' option to read from a file.
+     Program prints:
+
+Will read 20 appointments from file:
+     Appointment 1 stored as: 1 1, 2015:  appointment 1 
+     Appointment 2 stored as: 2 21, 2014:  appointment 2 
+     Appointment 3 stored as: 3 15, 49:  uh oh caesar 
+     Appointment 4 stored as: 4 6, 2014:  my birthday 
+     Appointment 5 stored as: 5 30, 2015:  dad's birthday 
+     Appointment 6 stored as: 6 12, 2015:  a day 
+     Appointment 7 stored as: 7 4, 2015:   independence day 
+     Appointment 8 stored as: 8 2, 2015:  appointment 7 
+     Appointment 9 stored as: 9 12, 2015:  notes 
+     Appointment 10 stored as: 10 22, 2015:  Job interview 
+     Appointment 11 stored as: 10 22, 2017:  another day 
+     Appointment 12 stored as: 11 30, 2015:  yep 
+     Appointment 13 stored as: 12 25, 2014:  Christmas! 
+     Appointment 14 stored as: 1 1, 2015:  new years 
+     Appointment 15 stored as: 8 12, 2015:  notes 
+     Appointment 16 stored as: 7 16, 2014:  mom's bday 
+     Appointment 17 stored as: 11 15, 2015:  it'c cold 
+     Appointment 18 stored as: 11 21, 2014:  supp prob 4 due 
+     Appointment 19 stored as: 11 21, 2014:  mentor app due 
+     Appointment 20 stored as: 4 12, 2015:  final appt 
+
+
+-> note that the program DOES NOT RUN if the number of appointments
+   to be read from a file exceeds the max size of the array. This is
+   because the check for a full array is located in the main function.
+-> this could be fixed by moving check into a function and calling it both
+   in main and in the readFromFile option
+
+Now proceed to test the specifications of the problem:
+
+    ->Test Case 3:
+    Test the case of a user entering an incorect month name:
+    Run the program, select option e and then enter " Jan 1, 2015: new years!"
+    The program prints:
+    "An invalid month name was entered, returning to menu"
+    and then prints the menu again. If we try to print the appointment, we
+    see that it has not been stored.
+    ->Note that lowercase month names will also return this error.
+
+    ->Test Case 4:
+    To check the functionality of the print option enter two appointments
+    April 27, 2015: baby shower
+    June 12, 2014: job interview
+    and now choose the print option by entering 'p'. The program prints:
+    Printing appointments:
+    Appointment 1: April 27, 2015: baby shower 
+    Appointment 2: June 12, 2014: job interview
+
+    which prints the fill month name, as well as the rest of the
+    appointment data
+
+    ->Test case 5:
+    File test3.txt contains a list of 50 appointments. Change the 
+    numRead variable in main to 50 and maxSize to 100 and read in the data
+    in the file as described in test case 2.
+
+    Now that we have supposedly read in a large list of data, check that
+    the program imported the data correctly by printing the list.
+
+    ->The program prints the appointments as listed in the file:
+Will read 50 appointments from file:
+	Appointment 1 stored as: 1 12, 2014:  a day
+	Appointment 2 stored as: 3 1, 2015:  anniversary
+	Appointment 3 stored as: 1 5, 2014:  pay bill
+	Appointment 4 stored as: 5 5, 2014:  pay bill
+	Appointment 5 stored as: 6 6, 2014:  mhmm
+	Appointment 6 stored as: 2 3, 2014:  appointment
+	Appointment 7 stored as: 1 30, 2014:  pay employees
+	Appointment 8 stored as: 1 4, 2014:  yep
+	Appointment 9 stored as: 3 15, 2014:  Ides of March
+	Appointment 10 stored as: 3 10, 2014:  here i am
+	Appointment 11 stored as: 8 8, 2014:  erin's birthday
+	Appointment 12 stored as: 1 31, 2014:  a special day
+	Appointment 13 stored as: 5 15, 2014:  warm
+	Appointment 14 stored as: 8 10, 2014:  the tenth!
+	Appointment 15 stored as: 7 10, 2014:  the tenth!
+	Appointment 16 stored as: 8 4, 2015:  appointment
+	Appointment 17 stored as: 1 8, 2014:  very chilly
+	Appointment 18 stored as: 7 12, 2014:  pay bill
+	Appointment 19 stored as: 10 30, 2014: 
+	Appointment 20 stored as: 6 28, 2014:  pay employees
+	Appointment 21 stored as: 11 10, 2014:  the tenth!
+	Appointment 22 stored as: 4 28, 2014:  pay employees
+	Appointment 23 stored as: 11 30, 2015:  appointment
+	Appointment 24 stored as: 2 4, 2014:  pay employees
+	Appointment 25 stored as: 9 30, 2014:  chilly
+	Appointment 26 stored as: 9 1, 2014:  first!
+	Appointment 27 stored as: 7 8, 2014:  summer day
+	Appointment 28 stored as: 11 15, 2014:  chilly
+	Appointment 29 stored as: 4 1, 2014:  April fools!
+	Appointment 30 stored as: 5 1, 2014:  first!
+	Appointment 31 stored as: 12 30, 2015:  almost a new year!
+	Appointment 32 stored as: 10 9, 2015:  notes
+	Appointment 33 stored as: 2 15, 2014:  notes
+	Appointment 34 stored as: 12 28, 2014:  appointment
+	Appointment 35 stored as: 3 8, 2014:  eighth of March
+	Appointment 36 stored as: 12 4, 2014:  concert in Iowa
+	Appointment 37 stored as: 4 30, 2014:  no notes
+	Appointment 38 stored as: 9 12, 2014:  pay bill
+	Appointment 39 stored as: 1 12, 2014:  interview
+	Appointment 40 stored as: 10 12, 2014:  job interview
+	Appointment 41 stored as: 3 1, 2015:  job
+	Appointment 42 stored as: 2 30, 2014:  appointment
+	Appointment 43 stored as: 6 22, 2014:  june
+	Appointment 44 stored as: 4 22, 2014:  buy presents
+	Appointment 45 stored as: 6 10, 2014:  go to concert
+	Appointment 46 stored as: 2 12, 2014:  appointment
+	Appointment 47 stored as: 5 1, 2014:  dentist
+	Appointment 48 stored as: 1 15, 2014:  shopping
+	Appointment 49 stored as: 6 1, 2014:  summer?
+	Appointment 50 stored as: 9 22, 2014:  last appointment
+
+    Now we can test the functionality of the sorting algrithm by selecting
+    the "d" option. The program prints the appropriate message:
+
+    "Elements of calendar are now sorted. Print with 'p' option"
+
+    Now when we do print the list we see it has been sorted with the
+    earliest dates at the top. Notice also that appointments are in order
+    by month and day.
+
+    program prints:
+
+    Printing appointments:
+    Appointment 1: January 4, 2014: yep 
+    Appointment 2: January 5, 2014: pay bill 
+    Appointment 3: January 8, 2014: very chilly 
+    Appointment 4: January 12, 2014: a day 
+    Appointment 5: January 12, 2014: interview 
+    Appointment 6: January 15, 2014: shopping 
+    Appointment 7: January 30, 2014: pay employees 
+    Appointment 8: January 31, 2014: a special day 
+    Appointment 9: February 3, 2014: appointment 
+    Appointment 10: February 4, 2014: pay employees 
+    Appointment 11: February 12, 2014: appointment 
+    Appointment 12: February 15, 2014: notes 
+    Appointment 13: February 30, 2014: appointment 
+    Appointment 14: March 8, 2014: eighth of March 
+    Appointment 15: March 10, 2014: here i am 
+    Appointment 16: March 15, 2014: Ides of March 
+    Appointment 17: April 1, 2014: April fools! 
+    Appointment 18: April 22, 2014: buy presents 
+    Appointment 19: April 28, 2014: pay employees 
+    Appointment 20: April 30, 2014: no notes 
+    Appointment 21: May 1, 2014: first! 
+    Appointment 22: May 1, 2014: dentist 
+    Appointment 23: May 5, 2014: pay bill 
+    Appointment 24: May 15, 2014: warm 
+    Appointment 25: June 1, 2014: summer? 
+    Appointment 26: June 6, 2014: mhmm 
+    Appointment 27: June 10, 2014: go to concert 
+    Appointment 28: June 22, 2014: june 
+    Appointment 29: June 28, 2014: pay employees 
+    Appointment 30: July 8, 2014: summer day 
+    Appointment 31: July 10, 2014: the tenth! 
+    Appointment 32: July 12, 2014: pay bill 
+    Appointment 33: August 8, 2014: erin's birthday 
+    Appointment 34: August 10, 2014: the tenth! 
+    Appointment 35: September 1, 2014: first! 
+    Appointment 36: September 12, 2014: pay bill 
+    Appointment 37: September 22, 2014: last appointment 
+    Appointment 38: September 30, 2014: chilly 
+    Appointment 39: October 12, 2014: job interview 
+    Appointment 40: October 30, 2014: 
+    Appointment 41: November 10, 2014: the tenth! 
+    Appointment 42: November 15, 2014: chilly 
+    Appointment 43: December 4, 2014: concert in Iowa 
+    Appointment 44: December 28, 2014: appointment 
+    Appointment 45: March 1, 2015: anniversary 
+    Appointment 46: March 1, 2015: job 
+    Appointment 47: August 4, 2015: appointment 
+    Appointment 48: October 9, 2015: notes 
+    Appointment 49: November 30, 2015: appointment 
+    Appointment 50: December 30, 2015: almost a new year! 
+
+    -> which we see are in order from earliest to latest!
+
+    Now we can test the second sorting option with the 'a' option. The program 
+    prints the same prompt as indicated above and when we print the list of 
+    appointments we see that they are alphabetized. Notice that program does
+    not account for capital letters vs lowercase.
+    program prints:
+
+        Printing appointments:
+        Appointment 1: October 30, 2014: 
+        Appointment 2: April 1, 2014: April fools! 
+        Appointment 3: March 15, 2014: Ides of March 
+        Appointment 4: January 12, 2014: a day 
+        Appointment 5: January 31, 2014: a special day 
+        Appointment 6: December 30, 2015: almost a new year! 
+        Appointment 7: March 1, 2015: anniversary 
+        Appointment 8: February 3, 2014: appointment 
+        Appointment 9: February 12, 2014: appointment 
+        Appointment 10: February 30, 2014: appointment 
+        Appointment 11: December 28, 2014: appointment 
+        Appointment 12: August 4, 2015: appointment 
+        Appointment 13: November 30, 2015: appointment 
+        Appointment 14: April 22, 2014: buy presents 
+        Appointment 15: September 30, 2014: chilly 
+        Appointment 16: November 15, 2014: chilly 
+        Appointment 17: December 4, 2014: concert in Iowa 
+        Appointment 18: May 1, 2014: dentist 
+        Appointment 19: March 8, 2014: eighth of March 
+        Appointment 20: August 8, 2014: erin's birthday 
+        Appointment 21: May 1, 2014: first! 
+        Appointment 22: September 1, 2014: first! 
+        Appointment 23: June 10, 2014: go to concert 
+        Appointment 24: March 10, 2014: here i am 
+        Appointment 25: January 12, 2014: interview 
+        Appointment 26: March 1, 2015: job 
+        Appointment 27: October 12, 2014: job interview 
+        Appointment 28: June 22, 2014: june 
+        Appointment 29: September 22, 2014: last appointment 
+        Appointment 30: June 6, 2014: mhmm 
+        Appointment 31: April 30, 2014: no notes 
+        Appointment 32: February 15, 2014: notes 
+        Appointment 33: October 9, 2015: notes 
+        Appointment 34: January 5, 2014: pay bill 
+        Appointment 35: May 5, 2014: pay bill 
+        Appointment 36: July 12, 2014: pay bill 
+        Appointment 37: September 12, 2014: pay bill 
+        Appointment 38: January 30, 2014: pay employees 
+        Appointment 39: February 4, 2014: pay employees 
+        Appointment 40: April 28, 2014: pay employees 
+        Appointment 41: June 28, 2014: pay employees 
+        Appointment 42: January 15, 2014: shopping 
+        Appointment 43: July 8, 2014: summer day 
+        Appointment 44: June 1, 2014: summer? 
+        Appointment 45: July 10, 2014: the tenth! 
+        Appointment 46: August 10, 2014: the tenth! 
+        Appointment 47: November 10, 2014: the tenth! 
+        Appointment 48: January 8, 2014: very chilly 
+        Appointment 49: May 15, 2014: warm 
+        Appointment 50: January 4, 2014: yep 
+
+    Finally, we can test the write option by selecting 'w' option. The program
+    returns to the menu. 
+
+    If we terminate the program using 'q' option and enter 
+    emacs Appointments.txt
+    then we will see the list of appointments we just wrote to that file.
+    Note that this file will be created if it does not exist and overwritten
+    each time the program is run if it does. You may change specifications
+    within the appt-func.c file which indicate what file is to be written to.
+
+
+This program is correct to the specifications because it successfully
+maintains a daily calendar. It will allocate a larger appointment array
+when the old one is full and the sorting algorthm is the specified insertion
+sort with the comesFirst parameter. It can both read and write files as
+well as print and add appointments.
