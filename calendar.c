@@ -25,7 +25,7 @@
      *      /c_file_io.htm for how to write and read to a file             *
      *   -> also used man page on feof() and http://stackoverflow.com/     *
      *      questions/13384296/reading-input-file-in-c for help with       *
-     *      readFromFile function                                          *
+     *      readFromFile function (ended up not using feof())              *
      *                                                                     *
      *   Help obtained:  [none]                                            *
      *                                                                     *
@@ -39,10 +39,11 @@
 /*     calendar.c
  *
  *  This is a program to maintain a daily calendar via the terminal.
+ *  by: Renn Jervis
  */
 
 
-//compile and run with the line gcc -o calendar calendar.c && ./calendar
+//compile using makefile by typing make
 
 #include <stdio.h>
 #include <stdlib.h>       //for use with exit function
@@ -51,31 +52,31 @@
 #include "appt-func.h"    //header for appt functions
 
 
-/*Pre-conditions: None --note month of size 10 because no month names exceed
+/*Pre-conditions: Month is spelled correctly and has capital letter 
+--note month of size 10 because no month names exceed
                   9 characters (1 allows for null character).
   Post-conditions: Program will convert string containing month name into 
                   appropriate integer. If month name invalid, returns 0.  */
 int monthSort (char month[10]);
 
-//Pre-conditions:
-//Post-conditions:
+/*Pre-conditions: None
+  Post-conditions: Program prints menu and executes correct option until quit*/
 int main()
 {
   int i;
   int numAppts=0;
-  int maxSize = 4; /* current size of the apptArray */
+  int maxSize = 4; /* max size of current apptArray */
   int numRead = 4;  //number of appts to be read from file Appointment_input.txt
+  char option; //for option entered by user
+
  //declare dynamic array for storing appts
   struct appt * apptArray = malloc (maxSize * sizeof (struct appt));
-
-  //for option entered by user
-   char option;
 
   while(1)  //loop until program is quit
     {
       //print list of menu options
       printf("\nCalendar Program Options:\n");
-      printf("\t e:\tEnter a new appontment\n");
+      printf("\t e:\tEnter a new appointment\n");
       printf("\t d:\tSort appointments by date\n");
       printf("\t a:\tSort appointments alphabetically by text\n");
       printf("\t p:\tPrint curent appointments\n");
@@ -133,12 +134,10 @@ int main()
         case 'q':
           printf("Terminating program . . .\n");
           exit(0);
-        }
-          
+        }         
     }
-
   return 0;
-}
+} //end main
 
 int monthSort (char month[10])
 {
