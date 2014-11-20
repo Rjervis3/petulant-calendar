@@ -44,7 +44,6 @@ void addAppt(struct appt * apptarray, int * numAppts)
 
       if(option2 == 'c')
         { 
-
           strcpy(apptarray[*numAppts].text, text);
           //strcpy for text, other assignments within print statements below
           printf("The appointment stored as:");
@@ -114,8 +113,9 @@ int comesFirstByDate(struct appt app1, struct appt app2)
   if(app1.year < app2.year)  return 1;
   else if (app1.year == app2.year)
     {
-      if (app1.month < app2.month)  return 1;
-      else if (app1.day < app2.day) return 1;
+      if (app1.month < app2.month )  return 1;
+      else if (app1.month == app2.month && app1.day < app2.day) return 1;
+      else return 0;
     }
   else return 0;   //if app2.year > app1.year, app 1 is not first
 }
@@ -146,7 +146,7 @@ void writeToFile(struct appt * apptarray, int numAppts)
                                  "August",
                                  "September",
                                  "October",
-                                 "Novemeber",
+                                 "November",
                                  "December" };
 
   for (i=0; i<numAppts; i++)
@@ -165,15 +165,14 @@ void readFromFile(struct appt * apptarray, int * numAppts, int numRead)
   char line[maxLen];
   char month[10];
 
-  int i, j;
+  int i, j, k;
   int day;
   int year;
 
-  printf("Will read %d appointments from file\n", numRead);
+  printf("Will read %d appointments from file:\n", numRead);
   for(j=0; j<numRead; j++)
     {
       i=0; //reset on each loop
-      printf("loop %d!\n", j);
 
       //read name of month
       while ((month[i] = fgetc(file)) != ' ')
@@ -182,7 +181,6 @@ void readFromFile(struct appt * apptarray, int * numAppts, int numRead)
         }
       month[i]='\0';
 
-      printf("month read %s\n", month);
       apptarray[*numAppts].month = monthSort(month);
      
       fscanf(file, "%d,", &day);    //read day from file
@@ -191,13 +189,19 @@ void readFromFile(struct appt * apptarray, int * numAppts, int numRead)
 
       fscanf(file, "%d:", &year); //read year from file
       apptarray[*numAppts].year =year;
- 
 
-      fgets(line, maxLen, file); //reads until end of line, store in line
+      fgets(line, maxLen, file); //reads until end of line or \n, store in line
+
+      for(k=0; k<maxLen; k++) //clears newline stored above by fgets
+        { if (line[k] != 0)
+            {
+              if(line[k]=='\n') line[k]='\0';
+            }
+        }
 
       strcpy(apptarray[*numAppts].text, line); 
     
-      printf("The appointment %d stored as:", j+1);
+      printf("\tAppointment %d stored as:", j+1);
       
       printf(" %d %d, %d: %s\n", apptarray[*numAppts].month, 
              apptarray[*numAppts].day, apptarray[*numAppts].year, 

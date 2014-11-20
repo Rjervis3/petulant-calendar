@@ -65,8 +65,8 @@ int main()
 {
   int i;
   int numAppts=0;
-  int maxSize = 4; /* max size of current apptArray */
-  int numRead = 4;  //number of appts to be read from file Appointment_input.txt
+  int maxSize = 100; /* max size of current apptArray */
+  int numRead = 50;//number of appts to be read from file Appointment_input.txt
   char option; //for option entered by user
 
  //declare dynamic array for storing appts
