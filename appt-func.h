@@ -18,7 +18,7 @@ void printAppts(struct appt * apptarray, int count);
                    function should return 1 if first appt if before second
    Post-conditions: Program sorts appointments by date earliest to latest */
 void insertionSort(struct appt * apptarray, int length, 
-                  int func(struct appt, struct appt));
+                  int comesFirst(struct appt, struct appt));
 
 /* Pre-conditions: None
    Post-conditions: Program returns 1 if the date for app1 comes before 

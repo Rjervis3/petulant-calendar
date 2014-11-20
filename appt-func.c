@@ -60,13 +60,13 @@ void addAppt(struct appt * apptarray, int * numAppts)
 }
  
 void insertionSort(struct appt * apptarray, int length, 
-                  int func(struct appt, struct appt))
+                  int comesFirst(struct appt, struct appt))
 {
   int k;
   for ( k = 1; k < length; k++) {
     struct appt item = apptarray[k];
     int i = k-1;
-    while ((i >= 0) && (func(item, apptarray[i]))){
+    while ((i >= 0) && (comesFirst(item, apptarray[i]))){
       apptarray[i+1] = apptarray[i];
       i--;
     }
